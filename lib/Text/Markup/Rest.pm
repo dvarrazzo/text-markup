@@ -3,13 +3,29 @@ package Text::Markup::Rest;
 use 5.8.1;
 use strict;
 
+use File::Temp;
+
 our $VERSION = '0.15';
 
-# Optional arguments to pass to rst2html
-our @OPTIONS = ('--no-raw', '--no-file-insertion',
-                '--stylesheet=', '--cloak-email-address');
-
 sub parser {
+
+    # Generate the css file into a temp file.
+    # This css hides the error messages, leaving the body of the bad directives
+    # verbatim: the resulting output is more complete than running with --quiet
+    # and less disturbing than leaving the errors around.
+    my $tmp = File::Temp->new();
+    my $css = <<END;
+div.system-message p {
+    display: none;
+}
+END
+    print $tmp $css;
+
+    # Optional arguments to pass to rst2html
+    my @OPTIONS = (
+        '--no-raw', '--no-file-insertion', '--cloak-email-address',
+        '--stylesheet=' . $tmp->filename);
+
     my ($file, $encoding, $opts) = @_;
     open my $fh, "-|", "rst2html @OPTIONS $file",
         or die "Cannot execute rst2html $file: $!\n";
