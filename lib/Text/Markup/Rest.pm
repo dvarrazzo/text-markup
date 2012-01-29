@@ -46,8 +46,7 @@ class AnyDirective(Directive):
             children.append(nodes.emphasis(a, u"%s " % a))
         content = u'\\n'.join(self.content)
         children.append(nodes.literal_block(content, content))
-        node = any_directive(self.block_text, '', *children)
-        node.CLASS = self.name
+        node = any_directive(self.block_text, '', *children, dir_name=self.name)
         return [node]
 
 
@@ -58,13 +57,13 @@ class any_role(nodes.Inline, nodes.TextElement): pass
 class AnyRole:
     """A role to be rendered as a generic element with a specific class."""
     def __init__(self, role_name):
-        self.name = role_name
+        self.role_name = role_name
 
     def __call__(self, role, rawtext, text, lineno, inliner,
                  options={}, content=[]):
         roles.set_classes(options)
+        options['role_name'] = self.role_name
         node = any_role(rawtext, utils.unescape(text), **options)
-        node.CLASS = self.name
         return [node], []
 
 
@@ -132,15 +131,17 @@ from docutils.writers.html4css1 import Writer, HTMLTranslator
 
 class MyTranslator(HTMLTranslator):
     def visit_any_directive(self, node):
-        self.body.append(self.starttag(node, 'div',
-            CLASS='directive-%s' % node.CLASS))
+        cls = node.get('dir_name')
+        cls = cls and 'directive-%s' % cls or 'directive'
+        self.body.append(self.starttag(node, 'div', CLASS=cls))
 
     def depart_any_directive(self, node):
         self.body.append('\\n</div>\\n')
 
     def visit_any_role(self, node):
-        self.body.append(self.starttag(node, 'span', '',
-            CLASS='role-%s' % node.CLASS))
+        cls = node.get('role_name')
+        cls = cls and 'role-%s' % cls or 'role'
+        self.body.append(self.starttag(node, 'span', '', CLASS=cls))
 
     def depart_any_role(self, node):
         self.body.append('</span>')
