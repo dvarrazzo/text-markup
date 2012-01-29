@@ -165,7 +165,7 @@ sub parser {
     # Optional arguments to pass to rst2html
     my @OPTIONS = (
         '--no-raw', '--no-file-insertion', '--cloak-email-address',
-        '--stylesheet=');
+        '--quiet', '--stylesheet=');
 
     open my $fh, "-|", "python $scrname @OPTIONS $file",
         or die "Cannot execute rst2html $file: $!\n";
