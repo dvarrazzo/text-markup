@@ -25,8 +25,8 @@ while (my $data = <DATA>) {
     subtest "Testing $format format" => sub {
         local $@;
         eval "use $req; 1;" if $req;
-        plan skip_all => "$module not installed" if $@;
-        plan tests => @exts + 4;
+        plan skip_all => "$module not loading" if $@;
+        plan tests => @exts + 5;
         use_ok $module or next;
 
         push @loaded => $format unless grep { $_ eq $format } @loaded;
@@ -43,6 +43,12 @@ while (my $data = <DATA>) {
             file   => catfile('t', 'markups', "$format.txt"),
             format => $format,
         ), slurp catfile('t', 'html', "$format.html"), "Parse $format file";
+
+        is $parser->parse(
+            file   => catfile('t', 'empty.txt'),
+            format => $format,
+        ), undef, "Parse empty $format file";
+
     }
 }
 
@@ -57,4 +63,4 @@ trac,Text::Markup::Trac,Text::Trac 0.10,trac,trc
 textile,Text::Markup::Textile,Text::Textile 2.10,textile
 mediawiki,Text::Markup::Mediawiki,Text::MediawikiFormat 1.0,wiki,mwiki,mediawiki
 multimarkdown,Text::Markup::Multimarkdown,Text::MultiMarkdown 1.000033,mmd,mmkdn,mmkd,mmdown,mmarkdown
-rest,Text::Markup::Rest,,rest,rst
+rest,Text::Markup::Rest,Text::Markup::Rest,rest,rst

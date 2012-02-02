@@ -7,7 +7,7 @@ use Pod::Simple::XHTML '3.15';
 # Disable the use of HTML::Entities.
 $Pod::Simple::XHTML::HAS_HTML_ENTITIES = 0;
 
-our $VERSION = '0.15';
+our $VERSION = '0.16';
 
 sub parser {
     my ($file, $encoding, $opts) = @_;
@@ -16,7 +16,7 @@ sub parser {
     $p->html_header_tags('<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />');
     $p->strip_verbatim_indent(sub { (my $i = $_[0]->[0]) =~ s/\S.*//; $i });
     $p->output_string(\my $html);
-    # Want user supplied options to override even these default behaviors, 
+    # Want user supplied options to override even these default behaviors,
     # if necessary
     my $opt = $opts ? { @$opts } : {};
     foreach my $method ( keys %$opt ) {
@@ -24,6 +24,7 @@ sub parser {
         $p->$method($v);
     }
     $p->parse_file($file);
+    return unless $p->content_seen;
     utf8::encode($html);
     return $html;
 }
@@ -83,7 +84,7 @@ David E. Wheeler <david@justatheory.com>
 
 =head1 Copyright and License
 
-Copyright (c) 2011 David E. Wheeler. Some Rights Reserved.
+Copyright (c) 2011-2012 David E. Wheeler. Some Rights Reserved.
 
 This module is free software; you can redistribute it and/or modify it under
 the same terms as Perl itself.

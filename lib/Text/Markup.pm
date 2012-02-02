@@ -5,7 +5,7 @@ use strict;
 use Text::Markup::None;
 use Carp;
 
-our $VERSION = '0.15';
+our $VERSION = '0.16';
 
 my %_PARSER_FOR;
 my %REGEX_FOR = (
@@ -190,7 +190,8 @@ loaded elsewhere and that call C<register> to register themselves.
 
   my $html = $parser->parse(file => $file_to_parse);
 
-Parses a file and return the generated HTML. Supported parameters:
+Parses a file and return the generated HTML, or C<undef> if no markup was
+found in the file. Supported parameters:
 
 =over
 
@@ -259,9 +260,9 @@ Fork L<this project on GitHub|https://github.com/theory/text-markup/>
 
 Clone your fork and create a new branch in which to work:
 
-  git clone git@github.com:username/text-markup.git
+  git clone git@github.com:$USER/text-markup.git
   cd text-markup
-  git checkout -b foorbar
+  git checkout -b foobar
 
 =item 3
 
@@ -290,6 +291,7 @@ C<Text::FooBar> module, it might look something like this:
       open_bom my $fh, $file, ":encoding($encoding)";
       local $/;
       my $html = $md->parse(<$fh>);
+      return unless $html =~ /\S/;
       utf8::encode($html);
       return join( "\n",
           '<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />',
@@ -304,9 +306,9 @@ C<Text::FooBar> module, it might look something like this:
 Use the C<$encoding> argument as appropriate to read in the source file. If
 your parser requires that text be decoded to Perl's internal form, use of
 L<File::BOM> is recommended, so that an explicit BOM will determine the
-encoding. Otherwise, fallback on the specified encoding. Note that some
-parsers, such as an HTML parser, would want text encoded before it parsed
-it. In such a case, read in the file as raw bytes:
+encoding. Otherwise, fall back on the specified encoding. Note that some
+parsers, such as an HTML parser, would want text encoded before it parsed it.
+In such a case, read in the file as raw bytes:
 
       open my $fh, '<:raw', $file or die "Cannot open $file: $!\n";
 
@@ -317,6 +319,7 @@ such as a content-type C<< <meta> >> element:
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 
 This will allow any consumers of the returned HTML to parse it correctly.
+If the parser parsed no content, C<parser()> should return C<undef>.
 
 =item 5
 
@@ -378,7 +381,9 @@ Test your new parser by running
   prove -lv t/formats.t
 
 This will test I<all> included parsers, but of course you should only pay
-attention to how your parser works. Tweak until your tests pass.
+attention to how your parser works. Tweak until your tests pass. Note that one
+test has the parser parse a file with just a couple of empty lines, to ensure
+that the parser finds no content and returns C<undef>.
 
 =item 10
 
@@ -448,7 +453,7 @@ David E. Wheeler <david@justatheory.com>
 
 =head1 Copyright and License
 
-Copyright (c) 2011 David E. Wheeler. Some Rights Reserved.
+Copyright (c) 2011-2012 David E. Wheeler. Some Rights Reserved.
 
 This module is free software; you can redistribute it and/or modify it under
 the same terms as Perl itself.

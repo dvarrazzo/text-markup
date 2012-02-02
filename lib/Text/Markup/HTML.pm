@@ -3,13 +3,16 @@ package Text::Markup::HTML;
 use 5.8.1;
 use strict;
 
-our $VERSION = '0.15';
+our $VERSION = '0.16';
 
 sub parser {
     my ($file, $encoding, $opts) = @_;
-    open my $fh, '<:raw', $file or die "Cannot open $file: $!\n";
-    local $/;
-    return <$fh>;
+    my $html = do {
+        open my $fh, '<:raw', $file or die "Cannot open $file: $!\n";
+        local $/;
+        <$fh>;
+    };
+    return $html =~ /\S/ ? $html : undef
 }
 
 1;
@@ -49,7 +52,7 @@ David E. Wheeler <david@justatheory.com>
 
 =head1 Copyright and License
 
-Copyright (c) 2011 David E. Wheeler. Some Rights Reserved.
+Copyright (c) 2011-2012 David E. Wheeler. Some Rights Reserved.
 
 This module is free software; you can redistribute it and/or modify it under
 the same terms as Perl itself.

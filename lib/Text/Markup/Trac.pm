@@ -5,7 +5,7 @@ use strict;
 use File::BOM qw(open_bom);
 use Text::Trac '0.10';
 
-our $VERSION = '0.15';
+our $VERSION = '0.16';
 
 sub parser {
     my ($file, $encoding, $opts) = @_;
@@ -13,6 +13,7 @@ sub parser {
     open_bom my $fh, $file, ":encoding($encoding)";
     local $/;
     my $html = $trac->parse(<$fh>);
+    return unless $html =~ /\S/;
     utf8::encode($html);
     return qq{<html>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
@@ -62,7 +63,7 @@ David E. Wheeler <david@justatheory.com>
 
 =head1 Copyright and License
 
-Copyright (c) 2011 David E. Wheeler. Some Rights Reserved.
+Copyright (c) 2011-2012 David E. Wheeler. Some Rights Reserved.
 
 This module is free software; you can redistribute it and/or modify it under
 the same terms as Perl itself.

@@ -1,4 +1,4 @@
-Text/Markup version 0.15
+Text/Markup version 0.16
 ========================
 
 This library's module, Text::Markup, provides an single interface for parsing
@@ -14,7 +14,8 @@ currently supports the following markups:
 * [Textile](http://textism.com/tools/textile/)
 * [Trac](http://trac.edgewall.org/wiki/WikiFormatting)
 
-INSTALLATION
+Installation
+------------
 
 To install this module, type the following:
 
@@ -47,7 +48,7 @@ Text-Markup requires the following modules:
 Copyright and Licence
 ---------------------
 
-Copyright (c) 2011 David E. Wheeler. Some Rights Reserved.
+Copyright (c) 2011-2012 David E. Wheeler. Some Rights Reserved.
 
 This module is free software; you can redistribute it and/or modify it under
 the same terms as Perl itself.
